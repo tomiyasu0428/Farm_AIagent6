@@ -1,0 +1,16 @@
+# Environments
+.env
+.env.*
+
+# Poetry
+.venv
+poetry.lock
+.pypoetry.local
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+
+# macOS
+.DS_Store

@@ -1,0 +1,25 @@
+[tool.poetry]
+name = "agri-ai-agent"
+version = "0.1.0"
+description = "LINE Bot with LangGraph and MongoDB for Agriculture"
+authors = ["Gemini <gemini@google.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.10"
+# LINE Bot
+line-bot-sdk = "^3.9.0"
+# Webフレームワーク
+fastapi = "^0.111.0"
+uvicorn = {extras = ["standard"], version = "^0.30.1"}
+# 環境変数管理
+python-dotenv = "^1.0.1"
+# AI/LangChain
+langchain = "^0.2.5"
+langgraph = "^0.0.69"
+# データベース
+pymongo = "^4.8.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

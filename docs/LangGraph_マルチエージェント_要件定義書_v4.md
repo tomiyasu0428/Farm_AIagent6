@@ -186,7 +186,7 @@ MongoDBのドキュメントモデルを最大限に活用し、**「固定さ�
 
 - **UI/UX**: LINE Messaging API, LIFF
 - **AI/エージェント**: Python 3.9+, LangChain, LangGraph
-- **LLM / Embedding**: Google Gemini Pro / Flash, テキスト埋め込みモデル
+- **LLM / Embedding**: Google Gemini 2.5Flash, テキスト埋め込みモデル
 - **データベース**: MongoDB Atlas
   - **Atlas Search**: キーワード検索とベクトル検索を統合するハイブリッド検索機能。
   - **Atlas Vector Search**: 意味に基づいたセマンティック検索の中核。

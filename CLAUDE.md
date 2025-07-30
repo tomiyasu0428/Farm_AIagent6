@@ -1,64 +1,64 @@
 # CLAUDE.md
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+このファイルは、Claude Code (claude.ai/code) がこのリポジトリでコードを扱う際のガイダンスを提供します。
 
-## Project Overview
+## プロジェクト概要
 
-This is the Agri_AI6 project - an agricultural AI agent system designed to provide intelligent support to farm workers through LINE messaging. The system uses LangGraph for multi-agent architecture and MongoDB Atlas for hybrid search capabilities.
+これはAgri_AI6プロジェクトです - LINEメッセージングを通じて農業従事者にインテリジェントなサポートを提供する農業AIエージェントシステムです。マルチエージェントアーキテクチャにはLangGraphを、ハイブリッド検索機能にはMongoDB Atlasを使用します。
 
-**Current Status**: This repository contains comprehensive design documentation but no implementation code yet. This is a greenfield project ready for development based on the detailed specifications in the `docs/` folder.
+**現在のステータス**: このリポジトリには包括的な設計ドキュメントが含まれていますが、実装コードはまだありません。`docs/`フォルダ内の詳細な仕様に基づいて開発準備が整ったグリーンフィールドプロジェクトです。
 
-## Architecture
+## アーキテクチャ
 
-### Core Components
+### コアコンポーネント
 
-The system follows a **Supervisor-Worker multi-agent pattern** using LangGraph:
+システムはLangGraphを使用した**スーパーバイザー・ワーカー マルチエージェントパターン**に従います：
 
-1. **SupervisorAgent**: Central orchestrator that receives LINE webhook messages, analyzes user intent, and delegates tasks to specialized agents
-2. **ReadAgent**: Handles information retrieval using MongoDB Atlas hybrid search (combining keyword and vector search)
-3. **WriteAgent**: Manages data writing operations including work record registration and confirmation workflows
+1. **SupervisorAgent**: LINE webhookメッセージを受信し、ユーザーの意図を分析し、専門エージェントにタスクを委譲する中央オーケストレーター
+2. **ReadAgent**: MongoDB Atlasハイブリッド検索（キーワード検索とベクトル検索の組み合わせ）を使用した情報検索を処理
+3. **WriteAgent**: 作業記録の登録と確認ワークフローを含むデータ書き込み操作を管理
 
-### Technology Stack
+### 技術スタック
 
-- **AI/Agents**: Python 3.9+, LangChain, LangGraph
-- **LLM**: Google Gemini Pro/Flash with text embedding models
-- **Database**: MongoDB Atlas
-  - Atlas Search: Keyword search with BM25 algorithm
-  - Atlas Vector Search: Semantic search using embeddings
-  - Hybrid search using `$rankFusion` stage for optimal results
-- **Interface**: LINE Messaging API with LIFF (LINE Front-end Framework)
-- **Infrastructure**: Google Cloud Functions (webhooks), Google Cloud Run (agent execution), Google Cloud Pub/Sub (async notifications)
-- **Monitoring**: LangSmith
+- **AI/エージェント**: Python 3.9+, LangChain, LangGraph
+- **LLM**: Google Gemini Pro/Flash とテキスト埋め込みモデル
+- **データベース**: MongoDB Atlas
+  - Atlas Search: BM25アルゴリズムによるキーワード検索
+  - Atlas Vector Search: 埋め込みを使用したセマンティック検索
+  - `$rankFusion`ステージを使用した最適なハイブリッド検索
+- **インターフェース**: LINE Messaging API と LIFF (LINE Front-end Framework)
+- **インフラ**: Google Cloud Functions (webhook), Google Cloud Run (エージェント実行), Google Cloud Pub/Sub (非同期通知)
+- **監視**: LangSmith
 
-### Database Design
+### データベース設計
 
-MongoDB collections use flexible schemas to support agricultural data:
+MongoDBコレクションは農業データをサポートする柔軟なスキーマを使用：
 
-- **farms**: Basic farm information
-- **users**: LINE account integration with worker data
-- **fields**: Field details with extensible `custom_properties` for farm-specific data
-- **work_records**: Daily work records with dynamic `details` based on work type
+- **farms**: 基本的な農場情報
+- **users**: 作業者データとのLINEアカウント統合
+- **fields**: 農場固有データのための拡張可能な`custom_properties`を持つ圃場詳細
+- **work_records**: 作業タイプに基づく動的な`details`を持つ日々の作業記録
 
-Key design principle: **"Fixed core information + freely extensible custom information per farm"**
+重要な設計原則: **「固定されたコア情報 + 農家ごとに自由に拡張できるカスタム情報」**
 
-## Development Phases
+## 開発フェーズ
 
-The project is planned in 4 phases:
+プロジェクトは4つのフェーズで計画されています：
 
-1. **Phase 1 (3 weeks)**: Basic foundation with Supervisor + ReadAgent implementing hybrid search for LINE Q&A
-2. **Phase 2 (3 weeks)**: WriteAgent for work record registration via LINE + basic LIFF dashboard
-3. **Phase 3 (4 weeks)**: RecommendationAgent for work suggestions + advanced LIFF features
-4. **Phase 4 (4 weeks)**: NotificationAgent for proactive notifications + async processing infrastructure
+1. **Phase 1 (3週間)**: Supervisor + ReadAgentによるLINE Q&Aのためのハイブリッド検索を実装した基本基盤
+2. **Phase 2 (3週間)**: LINE経由の作業記録登録のためのWriteAgent + 基本LIFFダッシュボード
+3. **Phase 3 (4週間)**: 作業提案のためのRecommendationAgent + 高度なLIFF機能
+4. **Phase 4 (4週間)**: プロアクティブ通知のためのNotificationAgent + 非同期処理インフラ
 
-## Key Technical Concepts
+## 主要な技術概念
 
-### Hybrid Search Strategy
-- **Keyword search**: Effective for specific product names, model numbers, proper nouns
-- **Vector search**: Effective for ambiguous expressions, contextual understanding
-- **Combined approach**: Uses MongoDB's `$rankFusion` with Reciprocal Rank Fusion (RRF) algorithm
+### ハイブリッド検索戦略
+- **キーワード検索**: 特定の製品名、型番、固有名詞に効果的
+- **ベクトル検索**: 曖昧な表現、文脈理解に効果的
+- **組み合わせアプローチ**: MongoDBの`$rankFusion`とReciprocal Rank Fusion (RRF)アルゴリズムを使用
 
-### State Management
-Uses `AgriAgentState` with LangGraph for conversation context:
+### 状態管理
+会話コンテキストのためにLangGraphで`AgriAgentState`を使用：
 ```python
 class AgriAgentState(TypedDict):
     messages: Annotated[List[BaseMessage], operator.add]
@@ -68,41 +68,41 @@ class AgriAgentState(TypedDict):
     pending_confirmation: Dict[str, Any]
 ```
 
-### LINE Integration
-- **Chat Interface**: Natural language work reporting and simple Q&A
-- **LIFF Interface**: Rich UI dashboards, work planning visualization, complex data input forms
+### LINE統合
+- **チャットインターフェース**: 自然言語による作業報告とシンプルなQ&A
+- **LIFFインターフェース**: リッチUIダッシュボード、作業計画可視化、複雑なデータ入力フォーム
 
-## Key Documentation
+## 重要なドキュメント
 
-The most important design documents are:
-- `docs/LangGraph_マルチエージェント_要件定義書_v4.md`: Main requirements specification (v4.1)
-- `docs/企画書：LangGraphとMongoDBハイブリッド検索を活用した次世代LINE AIエージェントの構築.md`: Technical architecture deep dive
-- `docs/2025-07-26_農場管理AIエージェント完全開発ガイドのコピー.md`: Development guide with MongoDB flexibility focus
+最も重要な設計ドキュメント：
+- `docs/LangGraph_マルチエージェント_要件定義書_v4.md`: メイン要件仕様書 (v4.1)
+- `docs/企画書：LangGraphとMongoDBハイブリッド検索を活用した次世代LINE AIエージェントの構築.md`: 技術アーキテクチャの詳細
+- `docs/2025-07-26_農場管理AIエージェント完全開発ガイドのコピー.md`: MongoDBの柔軟性に焦点を当てた開発ガイド
 
-## Development Guidelines
+## 開発ガイドライン
 
-### When implementing the system:
+### システム実装時：
 
-1. **Start with Phase 1**: Implement basic LINE webhook → LangGraph → MongoDB Atlas flow
-2. **Use MongoDB Atlas features**: Leverage native hybrid search rather than separate vector databases
-3. **Design for flexibility**: Use MongoDB's document model to allow farms to extend schemas dynamically
-4. **Implement async processing**: LINE webhook responses must be immediate; use background tasks for heavy AI processing
-5. **State persistence**: Use MongoDB as LangGraph checkpointer for conversation continuity
-6. **Migrate existing assets**: The system builds upon "Agri_AI3" - reuse existing 11 LangChain tools and MongoDB schemas where possible
+1. **Phase 1から開始**: 基本的なLINE webhook → LangGraph → MongoDB Atlasフローを実装
+2. **MongoDB Atlas機能を使用**: 別々のベクトルデータベースではなくネイティブハイブリッド検索を活用
+3. **柔軟性のための設計**: 農場がスキーマを動的に拡張できるようにMongoDBのドキュメントモデルを使用
+4. **非同期処理の実装**: LINE webhookレスポンスは即座である必要があり、重いAI処理にはバックグラウンドタスクを使用
+5. **状態永続化**: 会話継続のためにMongoDBをLangGraphチェックポインターとして使用
+6. **既存資産の移行**: システムは「Agri_AI3」の上に構築 - 既存の11個のLangChainツールとMongoDBスキーマを可能な限り再利用
 
-### Architecture Decisions
+### アーキテクチャの決定事項
 
-- **Single database approach**: MongoDB Atlas handles all data types (documents, vectors, search indexes, conversation state) to eliminate data synchronization complexity
-- **Graph-based agent control**: LangGraph provides explicit control flow for complex agent interactions vs. linear chains
-- **LINE-first interface**: Natural language primary interface with LIFF for complex visualizations
-- **Hybrid search optimization**: Combine precise keyword matching with semantic understanding for agricultural domain queries
+- **単一データベースアプローチ**: MongoDB Atlasがすべてのデータタイプ（ドキュメント、ベクトル、検索インデックス、会話状態）を処理してデータ同期の複雑さを排除
+- **グラフベースエージェント制御**: LangGraphは線形チェーンに対して複雑なエージェント相互作用の明示的な制御フローを提供
+- **LINEファーストインターフェース**: 複雑な可視化にはLIFFを使用した自然言語プライマリインターフェース
+- **ハイブリッド検索最適化**: 農業ドメインクエリのための精密なキーワードマッチングとセマンティック理解の組み合わせ
 
-## Business Context
+## ビジネスコンテキスト
 
-This system targets agricultural workers who need:
-- Instant access to "what to do next" decisions while in the field
-- Reduction of thinking/decision time from 10 minutes to 0 minutes
-- Natural language work recording through LINE
-- AI memory of past work and contextual recommendations
+このシステムは以下を必要とする農業従事者をターゲットとします：
+- 圃場にいる間の「次に何をすべきか」決定への即座のアクセス
+- 思考/決定時間を10分から0分への短縮
+- LINEを通じた自然言語による作業記録
+- 過去の作業とコンテキスト推奨のAI記憶
 
-The goal is to create an AI partner that grows smarter with use and eliminates the cognitive load of agricultural decision-making.
+目標は、使用とともに賢くなり、農業意思決定の認知負荷を排除するAIパートナーを作成することです。

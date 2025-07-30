@@ -17,6 +17,7 @@ python-dotenv = "^1.0.1"
 # AI/LangChain
 langchain = "^0.2.5"
 langgraph = "^0.0.69"
+langchain-google-genai = "^1.0.6"
 # データベース
 pymongo = "^4.8.0"
 
